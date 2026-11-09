@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Warden</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">W</span>
+        <div>
+          <h1>Warden</h1>
+          <p>AI that pays Africa's talent, on a leash it can't break.</p>
+        </div>
+      </div>
+      <div class="pills">
+        <span class="pill" id="network-pill">XRPL testnet</span>
+        <span class="pill" id="agent-pill">Agent: …</span>
+        <button class="ghost small" id="reset-btn" hidden>Start over</button>
+      </div>
+    </header>
+
+    <section id="setup" class="setup card" hidden>
+      <h2>Build the leash on testnet</h2>
+      <p>
+        This creates a business treasury, an agent wallet behind a 2-of-2 multisig, and a 50 XRP payment channel to
+        Tendai, a designer in Harare. It takes about 30 seconds.
+      </p>
+      <button id="setup-btn" class="primary">Create testnet accounts</button>
+      <p class="hint" id="setup-status"></p>
+    </section>
+
+    <main id="app" hidden>
+      <section class="layers" aria-label="The four layers">
+        <article class="layer card">
+          <span class="num">1</span>
+          <h3>Treasury</h3>
+          <p class="big" id="treasury-balance">–</p>
+          <p class="sub">Owner key only. The agent never touches it.</p>
+          <a class="mono link" id="treasury-link" target="_blank" rel="noopener"></a>
+        </article>
+        <article class="layer card">
+          <span class="num">2</span>
+          <h3>Channel → <span id="f-name">Tendai</span></h3>
+          <p class="big"><span id="f-claimed">–</span><small> / <span id="f-amount">–</span> XRP paid</small></p>
+          <div class="bar"><div id="f-bar"></div></div>
+          <p class="sub">Locked to one wallet and one maximum by the ledger.</p>
+          <a class="mono link" id="f-link" target="_blank" rel="noopener"></a>
+        </article>
+        <article class="layer card">
+          <span class="num">3</span>
+          <h3>Guard rules</h3>
+          <dl class="rules">
+            <dt>Per job</dt><dd id="r-job">–</dd>
+            <dt>Daily cap</dt><dd id="r-day">–</dd>
+            <dt>Paid today</dt><dd id="r-spent">–</dd>
+          </dl>
+          <p class="sub">No AI. Just if-statements you can't sweet-talk.</p>
+        </article>
+        <article class="layer card">
+          <span class="num">4</span>
+          <h3>Owner key</h3>
+          <p class="big" id="access-status">–</p>
+          <p class="sub" id="multisig-status">–</p>
+          <button id="revoke-btn" class="danger">Revoke agent</button>
+        </article>
+      </section>
+
+      <section class="grid">
+        <div class="col">
+          <form class="card" id="job-form">
+            <div class="card-head">
+              <h2>Tendai submits work</h2>
+              <select id="preset" aria-label="Scenario"></select>
+            </div>
+            <label>Brief<textarea id="brief" rows="2"></textarea></label>
+            <label>Delivery<textarea id="delivery" rows="3"></textarea></label>
+            <label>Invoice <span class="hint">(written by the outside world)</span><textarea id="invoice" rows="4" class="mono"></textarea></label>
+            <button class="primary" type="submit">Submit to Warden</button>
+          </form>
+
+          <div class="card attack">
+            <h2>The attack</h2>
+            <p>
+              A poisoned invoice tells the agent to pay 40 XRP to a new wallet. Then we assume the agent is fully hijacked
+              and try every route: through the guard, around it, and by forging a channel claim.
+            </p>
+            <button id="attack-btn" class="danger">Run the attack</button>
+          </div>
+
+          <form class="card" id="policy-form">
+            <h2>Owner controls</h2>
+            <p class="sub">Set outside the agent. It has no way to call this.</p>
+            <div class="row">
+              <label>Per-job cap (XRP)<input id="cap-job" type="number" min="0.000001" step="any" required /></label>
+              <label>Daily cap (XRP)<input id="cap-day" type="number" min="0.000001" step="any" required /></label>
+            </div>
+            <button class="secondary" type="submit">Save rules</button>
+          </form>
+        </div>
+
+        <section class="card log">
+          <div class="card-head">
+            <h2>What happened</h2>
+            <span class="legend">
+              <i class="tag agent">agent</i><i class="tag guard">guard</i><i class="tag ledger">ledger</i><i class="tag owner">owner</i>
+            </span>
+          </div>
+          <ol id="log"></ol>
+        </section>
+      </section>
+    </main>
+
+    <div id="busy" hidden><span class="spinner"></span><span id="busy-text">Waiting for the ledger…</span></div>
+    <div id="toast" role="status" hidden></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
